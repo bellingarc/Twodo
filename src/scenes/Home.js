@@ -1,30 +1,35 @@
-import React, { useState } from 'react'
-import { Layout } from 'antd'
-import NavBar from '../components/common/NavBar'
+import React, { useState, useEffect, useContext } from 'react'
+import { UserContext } from '../App'
 import Head from '../components/home/Head'
 import TodoList from '../components/home/TodoList'
-const { Content, Footer } = Layout
 
 function Home() {
-  const initialItems = JSON.parse(localStorage.getItem('todoList'))
-    || [{item: 'Buy Milk', done:false},
-        {item: 'Cook Dog', done:false},
-        {item:'Walk Chicken', done:true}]
-  const [todoListItems, setTodoListItems] = useState(initialItems)
-
+  const [todoListItems, setTodoListItems] = useState([])
+  const [loading, setLoading] = useState(true)
+  const {user} = useContext(UserContext)
+  useEffect(() => {
+    if(user) {
+      setLoading(true)
+      fetch(`https://https://two-do-api.web.app/tasks${user.uid}`)
+        .then(res => res.json())
+        .then(data => {
+          setTodoListItems(data)
+          setLoading(false)
+        })
+        .catch(e => console.log(e))
+    } else {
+      setTodoListItems([])
+      setLoading(false)
+    }
+  }, [user])
   return (
-    <Layout className="layout">
-      <NavBar />
-      <Content style={{ padding: '0 50px' }}>
-        <div className="site-layout-content">
-          <Head todoListItems={todoListItems} setTodoListItems={setTodoListItems} />
-          <TodoList todoListItems={todoListItems} setTodoListItems={setTodoListItems} />
-        </div>
-      </Content>
-      <Footer style={{ textAlign: 'center' }}>
-        ©2021 Created by Skarzold
-      </Footer>
-    </Layout>
+    <>
+      <Head setTodoListItems={setTodoListItems} setLoading={setLoading} />
+      <TodoList
+        todoListItems={todoListItems}
+        setTodoListItems={setTodoListItems}
+        loading={loading}
+        setLoading={setLoading} />    </>
   )
 }
 
