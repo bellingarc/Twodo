@@ -8,7 +8,9 @@ function Head({ setTodoListItems, setLoading }) {
   const [newTodo, setNewTodo] = useState(null)
   function addTodo() {
     if (newTodo && newTodo.item && newTodo.item.trim()) {
-      fetch(`https://two-do-api.web.app/tasks/${user.uid}`, {
+      console.log(user.uid)
+      //fetch(`http://localhost:5000/tasks/${user.uid}`, {
+      fetch(`https://twodo-api-2.web.app/tasks/${user.uid}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newTodo),
@@ -18,7 +20,10 @@ function Head({ setTodoListItems, setLoading }) {
           setTodoListItems(data)
           setLoading(false)
         })
-        .catch((e) => console.log(e))
+        .catch(e => {
+          setLoading(false)
+          console.log(e)
+        })
     }
     setNewTodo(null)
   }
@@ -26,7 +31,7 @@ function Head({ setTodoListItems, setLoading }) {
   const userImage =
     (!user || !user.photoURL) ? null : <Avatar size={48} src={user.photoURL} />
   return (
-    <header style={{ textAlign: "center" }}>
+    <header style={{ textAlign: "center", paddingBottom: '40px' }}>
       <h1>
         Welcome {greeting} {userImage}
       </h1>

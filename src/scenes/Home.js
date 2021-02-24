@@ -9,15 +9,21 @@ function Home() {
   const {user} = useContext(UserContext)
   useEffect(() => {
     if(user) {
+      console.log('fetching todo items or something')
       setLoading(true)
-      fetch(`https://https://two-do-api.web.app/tasks${user.uid}`)
+      fetch(`https://twodo-api-2.web.app/tasks/${user.uid}`)
+      //fetch(`http://localhost:5000/tasks/${user.uid}`)
         .then(res => res.json())
         .then(data => {
           setTodoListItems(data)
           setLoading(false)
         })
-        .catch(e => console.log(e))
+        .catch(e => {
+          setLoading(false)
+          console.log(e)
+        })
     } else {
+      console.log('something else')
       setTodoListItems([])
       setLoading(false)
     }
